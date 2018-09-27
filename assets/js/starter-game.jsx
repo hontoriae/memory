@@ -26,7 +26,8 @@ class MatchGame extends React.Component {
       matchesComplete: 0,
       matchesAvailable: 8,
       clicks: 0,
-      matches: this.newMatches()
+      matches: this.newMatches(),
+      check: null
     };
   }
 
@@ -37,7 +38,7 @@ class MatchGame extends React.Component {
       let letterIndex = Math.floor(Math.random() * letterList.length);
       let letterVal = letterList[letterIndex];
       letterList.splice(letterIndex, 1);
-      let match = { letter: letterVal, show: false, complete: false }
+      let match = { letter: letterVal, show: false }
       xs.push(match);
       xs.push(match);
     });
@@ -50,32 +51,84 @@ class MatchGame extends React.Component {
       matches: xs,
       matchesComplete: 0,
       matchesAvailable: 8,
-      clicks: 0
+      clicks: 0,
+      check: null
     });
     this.setState({ st1 });
   }
 
 
   swap(_ev) {
+    let origClicks = clone(this.state.clicks);
     let state1 = _.assign({}, this.state, {
       // What goes here? Probably need to copy paste this like 4 times for swapping state things
     });
     this.setState(state1);
   }
 
-  reset() {
-    // Need to reset the state to the original state,
-    // create new matches, etc.
+  update(ii) {
+    let newClicks = this.state.clicks + 1;
+    let currCard = this.state.matches[ii];
+    let matchesList = this.state.matches;
+
+    if (this.state.check != null) {
+      let otherCard = this.state.matches[this.state.check];
+      if (currCard.letter == otherCard.letter) {
+        let newCard = { letter: "✓", show: true };
+        let secondNewCard = { letter: "✓", show: true };
+        matchesList.splice(ii, 1, newCard);
+        matchesList.splice(this.state.check, 1, secondNewCard);
+        let newMatchesCompleted = this.state.matchesComplete + 1;
+        let state1 = _.assign({}, this.state, {
+          clicks: newClicks,
+          matches: matchesList,
+          check: null,
+          matchesCompleted: newMatchesCompleted
+        });
+        this.setState(state1);
+      } else {
+        let newCard = { letter: currCard.letter, show: false };
+        let secondNewCard = { letter: otherCard.letter, show: false };
+        matchesList.splice(ii, 1, newCard);
+        matchesList.splice(this.state.check, 1, secondNewCard);
+        let state1 = _.assign({}, this.state, {
+          clicks: newClicks,
+          matches: matchesList,
+          check: null,
+        });
+        this.setState(state1);
+      }
+    } else {
+      let newCard = { letter: currCard.letter, show: true };
+      matchesList.splice(ii, 1, newCard);
+      let state1 = _.assign({}, this.state, {
+        clicks: newClicks,
+        matches: matchesList,
+        check: ii,
+      });
+      this.setState(state1);
+    }
   }
 
   rowRender(start, end) {
     let toRender = this.state.matches.slice(start, end);
-    console.log(toRender.length);
     let rendered =
       _.map(toRender, (card, ii) => {
-        return <div className="column card">
-          {card.letter}
-        </div>
+        let letterToShow = "";
+        if (card.show) {
+          letterToShow = card.letter;
+        } else {
+          letterToShow = "x";
+        }
+
+        let actualPos = start + ii;
+        return (
+          <div className="column">
+            <div className="card" key={actualPos} onClick={this.update.bind(this, actualPos)}>
+              {letterToShow}
+            </div>
+          </div>
+        )
       });
     return rendered;
   }
