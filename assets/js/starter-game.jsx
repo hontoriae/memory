@@ -79,11 +79,13 @@ class MatchGame extends React.Component {
         matchesList.splice(ii, 1, newCard);
         matchesList.splice(this.state.check, 1, secondNewCard);
         let newMatchesCompleted = this.state.matchesComplete + 1;
+        console.log("Increased matches completed!");
+        console.log(newMatchesCompleted);
         let state1 = _.assign({}, this.state, {
           clicks: newClicks,
           matches: matchesList,
           check: null,
-          matchesCompleted: newMatchesCompleted
+          matchesComplete: newMatchesCompleted
         });
         this.setState(state1);
       } else {
@@ -135,14 +137,17 @@ class MatchGame extends React.Component {
 
   render() {
     console.log("render");
-    // let resetButton = <button onClick="reset">Reset</button>
+    let resetButton = <button onClick={this.defaultMatches.bind(this)}>Reset</button>
     let clickTotal = <div>
       <p>
         You have clicked: {this.state.clicks} times
       </p>
     </div>
-    if (this.state.matchesAvailable == this.state.matchesComplete) {
+    console.log(this.state.matchesAvailable.valueOf());
+    console.log(this.state.matchesComplete.valueOf());
+    if (this.state.matchesAvailable.valueOf() == this.state.matchesComplete.valueOf()) {
       return <div>
+        {resetButton}
         <p>You win!</p>
       </div>;
     }
@@ -150,7 +155,7 @@ class MatchGame extends React.Component {
     return (
       <div id="game">
         {clickTotal}
-        <button onClick={this.defaultMatches.bind(this)}>Reset</button>
+        {resetButton}
         <div>
           <div className="row">
             {this.rowRender(0, 4)}
