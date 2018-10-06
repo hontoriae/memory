@@ -93,7 +93,8 @@ defaultMatches() {
   }
 """
   def new do
-    xs = newCards()
+    letterList = ["a", "b", "c", "d", "e", "f", "g", "h"]
+    xs = newCards(letterList, [])
     %{
       matches: xs,
       matchesComplete: 0,
@@ -168,7 +169,19 @@ defaultMatches() {
     return _.shuffle(xs);
   }
   """
-  def newCards do
-    
+  def newCards(letterList, acc) do
+    if (length(letterList) != 0) do
+      defMatch(letterList, acc);
+    else
+      acc 
+    end 
+  end
+
+  def defMatch(letters, acc) do
+    letterVal = hd(letters)
+    match = %{letter: letterVal, show: false}
+    newAcc = acc ++ [match, match]
+    newLetters = tl(letters)
+    newCards(newLetters, newAcc)
   end
 end

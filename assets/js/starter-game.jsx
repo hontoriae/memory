@@ -18,8 +18,9 @@ class MatchGame extends React.Component {
       check: null
     };
 
+    console.log("joining");
     this.channel.join()
-      .receive("ok", this.gotView.bind(this))
+      .receive("ok", console.log("joined"))
       .receive("error", resp => {console.log("Woopsies", resp)});
   }
 
@@ -43,6 +44,8 @@ class MatchGame extends React.Component {
   }
 
   rowRender(start, end) {
+    console.log("rowRender");
+    console.log(this.state.matches);
     let toRender = this.state.matches.slice(start, end);
     let rendered =
       _.map(toRender, (card, ii) => {

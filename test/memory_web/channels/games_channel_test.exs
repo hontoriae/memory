@@ -4,7 +4,6 @@ defmodule MemoryWeb.GamesChannelTest do
   setup do
     {:ok, _, socket} =
       socket(MemoryWeb.UserSocket, "user_id", %{some: :assign})
-      |> subscribe_and_join(MemoryWeb.GamesChannel, "games:lobby")
 
     {:ok, socket: socket}
   end
